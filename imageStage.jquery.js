@@ -4,7 +4,7 @@
 		'duration': 200,
 		'easing': 'linear',
 		'imageStageItems': '#imageStage-items',
-		'stageWidth': 750,
+		'stageWidth': 960,
 		'navWidth': 50,
 		'navOpacity': 1
 	};
@@ -16,13 +16,11 @@
 			}
 			
 			$(this).append('<div id="imageStage-left" class="imageStage-navigation"><div></div></div><div id="imageStage-right" class="imageStage-navigation"><div></div></div>');
-			
 			return $(this).each(function(){
 				var items = $(settings.imageStageItems).find('img');
 				var numberOfItems = items.length;
 				var width = settings.stageWidth * numberOfItems;
 				var position = 0;
-				var animating = false;
 
 				$(settings.imageStageItems).css({
 					'width': width
@@ -40,7 +38,7 @@
 							position = position - settings.navWidth;
 						}
 					} else {
-						if (position + 700 < 0) {
+						if (position + settings.stageWidth - settings.navWidth < 0) {
 							position = position + settings.navWidth;
 						}
 					}
@@ -66,29 +64,26 @@
 						});
 					}
 				}).click(function(){
-					if (animating === true || $(this).css('opacity') == 0) {
+					if ($(this).is(':animated') || $(this).css('opacity') == 0) {
 						return;
 					}
 					if ($(this).attr('id') === 'imageStage-right') {
-						if (position - 700 === -numberOfItems * settings.stageWidth + settings.stageWidth) {
-							position = position - 700;
+						if (position - settings.stageWidth - settings.stageWidth - settings.navWidth <= -numberOfItems * settings.stageWidth) {
+							position = position - settings.stageWidth + settings.navWidth;
 						} else if (position > -numberOfItems * settings.stageWidth + settings.stageWidth) {
-							position = position - 750;
+							position = position - settings.stageWidth;
 						}
 					} else {
-						if (position + 700 < 0) {
-							position = position + 750;	
+						if (position + settings.stageWidth - settings.navWidth < 0) {
+							position = position + settings.stageWidth;	
 						} else {
-							position = position + 700;
+							position = position + settings.stageWidth - settings.navWidth;
 						}
 					}
 					
 					
-					animating = true;
 					$(settings.imageStageItems).animate({
 						left: position + 'px'
-					}, function() {
-						animating = false;
 					});
 					if (position === 0 || position === -numberOfItems * settings.stageWidth + settings.stageWidth) {
 						$(this).css({
